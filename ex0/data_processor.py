@@ -3,6 +3,13 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
+class DataProcessor(ABC):
+    def __init__ (self) -> None:
+        self._storage: list[tuple[int, str]] = []
+        self._rank: int = 0
+    
+
+
 def test_numeric() -> None:
     print("Testing Numeric Processor...")
     numeric: NumericProcessor = NumericProcessor()
