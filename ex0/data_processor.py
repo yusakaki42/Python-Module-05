@@ -17,7 +17,20 @@ class DataProcessor(ABC):
         pass
 
     def output(self) -> tuple[int, str]:
-        return self._
+        return self._storage.pop(0)
+
+
+    class NumericProcessor(DataProcessor):
+        def validate(self, data: Any) -> bool:
+            if isinstance(data, (int, float)):
+                return True
+            elif isinstance(data, list):
+                for content in data:
+                    if not isinstance(content, (int, float)):
+                        return False
+                return True
+            else:
+                return False
 
 
 
