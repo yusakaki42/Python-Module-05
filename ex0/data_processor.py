@@ -3,8 +3,9 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
+
 class DataProcessor(ABC):
-    def __init__ (self) -> None:
+    def __init__(self) -> None:
         self._storage: list[tuple[int, str]] = []
         self._rank: int = 0
 
@@ -19,7 +20,6 @@ class DataProcessor(ABC):
     def output(self) -> tuple[int, str]:
         return self._storage.pop(0)
 
-
     class NumericProcessor(DataProcessor):
         def validate(self, data: Any) -> bool:
             if isinstance(data, (int, float)):
@@ -31,7 +31,6 @@ class DataProcessor(ABC):
                 return True
             else:
                 return False
-
 
         def ingest(self, data: int | float | list[int | float]) -> None:
             try:
@@ -46,6 +45,54 @@ class DataProcessor(ABC):
                     self._rank += 1
             except TypeError as e:
                 print(e)
+
+    class TextProcessor(DataProcessor):
+        def validate(self, data: Any) -> bool:
+            if isinstance(data, str):
+                return True
+            elif isinstance(data, list):
+                for content in data:
+                    if not isinstance(content, str):
+                        return False
+                    return True
+                else:
+                    return False
+
+        def ingest(self, data: str | list[str]) -> None:
+            try:
+                if not self.validate(data):
+                    raise TypeError("Got exception: Improper numeric data")
+                if isinstance(data, list):
+                    for content in data:
+                        self._storage.append((self._rank, str(content)))
+                        self._rank += 1
+                else:
+                    self._storage.append(self._rank, str(data))
+                    self._rank += 1
+            except TypeError as e:
+                print(e)
+
+    class LogProcessor(DataProcessor):
+        def validate(self, data:Any) -> Bool:
+            if isinstance(data, dict):
+                return True
+            elif isinstance(data, list):
+                for content in data:
+                    if not isinstance(content, dict):
+                        return False
+                    return True
+            else:
+                return False
+
+        def ingest(self, data: dict[str, str] |list[dict[str, str]]) -> None:
+            try
+                if not self.validate(data):
+                    raise TypeError("Got exception: Improper numeric data")
+                if isinstance(data, list[dict[str, str]]):
+                    for content in data:
+                        self._storage.append(self._rank, str(content))
+
+
 
 
 # def test_numeric() -> None:
@@ -63,7 +110,8 @@ def main() -> None:
         print(
             f"Trying to validate input '{example}':"
             f" {num.validate(example)}"
-            )
+        )
+
 
 if __name__ == "__main__":
     main()
