@@ -61,7 +61,7 @@ class DataProcessor(ABC):
         def ingest(self, data: str | list[str]) -> None:
             try:
                 if not self.validate(data):
-                    raise TypeError("Got exception: Improper numeric data")
+                    raise TypeError("Got exception: Improper text data")
                 if isinstance(data, list):
                     for content in data:
                         self._storage.append((self._rank, str(content)))
@@ -85,19 +85,24 @@ class DataProcessor(ABC):
                 return False
 
         def ingest(self, data: dict[str, str] |list[dict[str, str]]) -> None:
-            try
+            try:
                 if not self.validate(data):
-                    raise TypeError("Got exception: Improper numeric data")
-                if isinstance(data, list[dict[str, str]]):
+                    raise TypeError("Got exception: Improper log data")
+                if isinstance(data, list):
                     for content in data:
-                        self._storage.append(self._rank, str(content))
-
-
-
-
-# def test_numeric() -> None:
-#     print("Testing Numeric Processor...")
-#     numeric: NumericProcessor = NumericProcessor()
+                        self._storage.append(
+                            self._rank,
+                            str(f"{content['log_level']}:"
+                                f"{content['log_message']}")
+                            )
+                        self._rank += 1
+                else:
+                    self._storage.append((
+                        self._rank,
+                        str(f"{data['log_level']}: {data['log_message']}")))
+                    self._rank += 1
+            except TypeError as e:
+                print(e)
 
 
 def main() -> None:
@@ -110,7 +115,15 @@ def main() -> None:
         print(
             f"Trying to validate input '{example}':"
             f" {num.validate(example)}"
+            )
+    test2: str = "foo"
+    print(
+        "Test invalid ingestion of string "
+        f"'{test2}' without prior validation:"
         )
+    num.ingest(test2)
+    
+
 
 
 if __name__ == "__main__":
