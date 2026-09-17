@@ -57,8 +57,8 @@ class TextProcessor(DataProcessor):
                 if not isinstance(content, str):
                     return False
                 return True
-            else:
-                return False
+        else:
+            return False
 
     def ingest(self, data: str | list[str]) -> None:
         try:
@@ -93,11 +93,11 @@ class LogProcessor(DataProcessor):
                 raise TypeError("Got exception: Improper log data")
             if isinstance(data, list):
                 for content in data:
-                    self._storage.append(
+                    self._storage.append((
                         self._rank,
                         str(f"{content['log_level']}:"
                             f"{content['log_message']}")
-                    )
+                    ))
                     self._rank += 1
             else:
                 self._storage.append((
@@ -131,9 +131,44 @@ def main() -> None:
     num.ingest(test3)
     number: int = 3
     print(f"Extracting {number} value...")
-    for i in range(0, number):
+    for _ in range(0, number):
         key, value = num.output()
-        print(f"Numeric value {i}: {number}")
+        print(f"Numeric value {key}: {value}")
+    print()
+
+    print("Testing Text Processor...")
+    txt = TextProcessor()
+    print(
+        "Trying to validate input"
+        f" '{test1[0]}': {txt.validate(test1[0])}"
+    )
+    test4: list[str] = ['Hello', 'Nexus', 'World']
+    print(f"Processing data: {test4}")
+    txt.ingest(test4)
+    number: int = 1
+    print(f"Extracting {number} value...")
+    for _ in range(0, number):
+        key, value = txt.output()
+        print(f"Text value {key}: {value}")
+    print()
+
+    print("Testing Log Processor...")
+    log = LogProcessor()
+    print(
+        "Trying to validate input "
+        f"'{test1[1]}': {log.validate(test1[1])}"
+    )
+    test5: list[dict[str, str]] = [
+        {'log_level': 'NOTICE', 'log_message': 'Connection to server'},
+        {'log_level': 'ERROR', 'log_message': 'Unauthorized access!!'}
+    ]
+    print(f"Processing data: {test5}")
+    log.ingest(test5)
+    number: int = 2
+    print(f"Extracting {number} values...")
+    for _ in range(0, number):
+        key, value = log.output()
+        print(f"Log entry {key}: {value}")
 
 
 if __name__ == "__main__":
