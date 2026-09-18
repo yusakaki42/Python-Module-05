@@ -69,7 +69,7 @@ class TextProcessor(DataProcessor):
                     self._storage.append((self._rank, str(content)))
                     self._rank += 1
             else:
-                self._storage.append(self._rank, str(data))
+                self._storage.append((self._rank, str(data)))
                 self._rank += 1
         except TypeError as e:
             print(e)
@@ -112,10 +112,8 @@ class DataStream():
     def __init__(self) -> None:
         self._processors: list[DataProcessor] = []
 
-
     def register_processor(self, proc: DataProcessor) -> None:
         self._processors.append(proc)
-
 
     def process_stream(self, stream: list[Any]) -> None:
         for data in stream:
@@ -127,8 +125,7 @@ class DataStream():
                 print(
                     "DataStream error - "
                     f"Can't process element in stream: {data}"
-                    )
-
+                )
 
     def print_processors_stats(self) -> None:
         if not self._processors:
@@ -138,7 +135,7 @@ class DataStream():
                 'Processor', ' Processor')
             print(
                 f"{name}: "
-                f"total {processor._rank}"
+                f"total {processor._rank} "
                 f"items processed, remaining {len(processor._storage)} "
                 "on processor"
             )
@@ -155,81 +152,47 @@ def main() -> None:
     print("== DataStream statistics ==")
     test_class.print_processors_stats()
     print("Registering Numeric Processor")
+    print()
     test_class.register_processor(numeric_proc)
     test_data: list[
         str | list[str | float | dict[str, str] | int] |
         int | dict[str, str]
-        ] = [
-            'Hello world', [3.14, -1, 2.71],
-            [{'log_level': 'WARNING',
-                'log_message': 'Telnet access! Use ssh instead'},
-                {'log_level': 'INFO',
-                 'log_message': 'User wil is connected'
-                 }], 42, ['Hi', 'five']]
+    ] = [
+        'Hello world', [3.14, -1, 2.71],
+        [{'log_level': 'WARNING',
+          'log_message': 'Telnet access! Use ssh instead'},
+         {'log_level': 'INFO',
+          'log_message': 'User wil is connected'
+          }], 42, ['Hi', 'five']]
     print(f"Send first batch of data on stream: {test_data}")
     test_class.process_stream(test_data)
-    
+    print("== DataStream statistics ==")
+    test_class.print_processors_stats()
+    print()
+    print("Registering other data processors")
+    test_class.register_processor(text_proc)
+    test_class.register_processor(log_proc)
+    print("Send the same batch again")
+    test_class.process_stream(test_data)
+    print("== DataStream statistics ==")
+    test_class.print_processors_stats()
+    to_consume_num: int = 3
+    to_consume_txt: int = 2
+    to_consume_log: int = 1
 
-    # print("=== Code Nexus - Data Processor ===")
-    # print()
-    # print("Testing Numeric Processor...")
-    # test1: list[int | str] = [42, "Hello"]
-    # num = NumericProcessor()
-    # for example in test1:
-    #     print(
-    #         f"Trying to validate input '{example}':"
-    #         f" {num.validate(example)}"
-    #     )
-    # test2: str = "foo"
-    # print(
-    #     "Test invalid ingestion of string "
-    #     f"'{test2}' without prior validation:"
-    # )
-    # num.ingest(test2)
-
-    # test3: list[list | float] = [1, 2, 3, 4, 5]
-    # print(f"processing data: {test3}")
-    # num.ingest(test3)
-    # number: int = 3
-    # print(f"Extracting {number} value...")
-    # for _ in range(0, number):
-    #     key, value = num.output()
-    #     print(f"Numeric value {key}: {value}")
-    # print()
-
-    # print("Testing Text Processor...")
-    # txt = TextProcessor()
-    # print(
-    #     "Trying to validate input"
-    #     f" '{test1[0]}': {txt.validate(test1[0])}"
-    # )
-    # test4: list[str] = ['Hello', 'Nexus', 'World']
-    # print(f"Processing data: {test4}")
-    # txt.ingest(test4)
-    # number: int = 1
-    # print(f"Extracting {number} value...")
-    # for _ in range(0, number):
-    #     key, value = txt.output()
-    #     print(f"Text value {key}: {value}")
-    # print()
-
-    # print("Testing Log Processor...")
-    # log = LogProcessor()
-    # print(
-    #     "Trying to validate input "
-    #     f"'{test1[1]}': {log.validate(test1[1])}"
-    # )
-    # test5: list[dict[str, str]] = [
-    #     {'log_level': 'NOTICE', 'log_message': 'Connection to server'},
-    #     {'log_level': 'ERROR', 'log_message': 'Unauthorized access!!'}
-    # ]
-    # print(f"Processing data: {test5}")
-    # log.ingest(test5)
-    # number: int = 2
-    # print(f"Extracting {number} values...")
-    # for _ in range(0, number):
-    #     key, value = log.output()
-    #     print(f"Log entry {key}: {value}")
+    print()
+    print(
+        "Consume some elements from the data processors: Numeric "
+        f"{to_consume_num}, Text {to_consume_txt}, Log {to_consume_log}"
+    )
+    for _ in range(to_consume_num):
+        numeric_proc.output()
+    for _ in range(to_consume_txt):
+        text_proc.output()
+    for _ in range(to_consume_log):
+        log_proc.output()
+    print("== DataStream statistics ==")
+    test_class.print_processors_stats()
 
 
 if __name__ == "__main__":
