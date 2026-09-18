@@ -126,7 +126,7 @@ def main() -> None:
     )
     num.ingest(test2)
 
-    test3: list[list | float] = [1, 2, 3, 4, 5]
+    test3: list[int | float] = [1, 2, 3, 4, 5]
     print(f"processing data: {test3}")
     num.ingest(test3)
     number: int = 3
@@ -145,7 +145,7 @@ def main() -> None:
     test4: list[str] = ['Hello', 'Nexus', 'World']
     print(f"Processing data: {test4}")
     txt.ingest(test4)
-    number: int = 1
+    number = 1
     print(f"Extracting {number} value...")
     for _ in range(0, number):
         key, value = txt.output()
@@ -164,7 +164,7 @@ def main() -> None:
     ]
     print(f"Processing data: {test5}")
     log.ingest(test5)
-    number: int = 2
+    number = 2
     print(f"Extracting {number} values...")
     for _ in range(0, number):
         key, value = log.output()
