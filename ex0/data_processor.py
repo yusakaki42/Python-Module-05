@@ -56,7 +56,7 @@ class TextProcessor(DataProcessor):
             for content in data:
                 if not isinstance(content, str):
                     return False
-                return True
+            return True
         else:
             return False
 
@@ -83,7 +83,7 @@ class LogProcessor(DataProcessor):
             for content in data:
                 if not isinstance(content, dict):
                     return False
-                return True
+            return True
         else:
             return False
 
