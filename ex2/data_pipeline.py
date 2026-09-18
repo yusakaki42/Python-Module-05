@@ -2,7 +2,6 @@
 
 from abc import ABC, abstractmethod
 from typing import Any, Protocol
-import typing
 
 
 class ExportPlugin(Protocol):
@@ -167,8 +166,8 @@ class DataStream():
                 "on processor"
             )
 
-
-    def output_pipeline(self, nb: int, plugin: ExportPlugin) -> None:
+    def output_pipeline(
+            self, nb: int, plugin: ExportPlugin) -> None:
         for processer in self._processors:
             data_to_output: list[tuple[int, str]] = []
             for _ in range(nb):
@@ -196,17 +195,17 @@ def main() -> None:
     test1: list[
         str | int | dict[str, str] |
         list[dict[str, str] | int | str | float]
-        ] = [
-            'Hello world', [3.14, -1, 2.71],
-            [
-                {
-                    'log_level': 'WARNING',
-                    'log_message': 'Telnet access! Use ssh instead'},
-                {
-                    'log_level': 'INFO',
-                    'log_message': 'User wil isconnected'}
-                ],
-            42, ['Hi', 'five']
+    ] = [
+        'Hello world', [3.14, -1, 2.71],
+        [
+            {
+                'log_level': 'WARNING',
+                'log_message': 'Telnet access! Use ssh instead'},
+            {
+                'log_level': 'INFO',
+                'log_message': 'User wil isconnected'}
+        ],
+        42, ['Hi', 'five']
     ]
     print(f"Send first batch of data on stream: {test1}")
     data_stream.process_stream(test1)
@@ -219,18 +218,18 @@ def main() -> None:
     data_stream.print_processors_stats()
     test2: list[
         str | int | dict[str, str] | list[dict[str, str] | int | str]
-        ] = [
+    ] = [
         21, [
             'I love AI', 'LLMs are wonderful',
             'Stay healthy'
-            ], [{
-                'log_level': 'ERROR',
-                'log_message': '500 server crash'
-                },
-                {
-                'log_level': 'NOTICE',
+        ], [{
+            'log_level': 'ERROR',
+            'log_message': '500 server crash'
+        },
+            {
+            'log_level': 'NOTICE',
                 'log_message': 'Certificate expires in 10 days'
-                }], [32, 42, 64, 84, 128, 168], 'World hello'
+        }], [32, 42, 64, 84, 128, 168], 'World hello'
     ]
     print(f"Send another batch of data: {test2}")
     data_stream.process_stream(test2)
