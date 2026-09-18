@@ -69,7 +69,7 @@ class TextProcessor(DataProcessor):
                     self._storage.append((self._rank, str(content)))
                     self._rank += 1
             else:
-                self._storage.append(self._rank, str(data))
+                self._storage.append((self._rank, str(data)))
                 self._rank += 1
         except TypeError as e:
             print(e)
